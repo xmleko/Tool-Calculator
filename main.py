@@ -16,8 +16,9 @@ class Calculator:
 
     def on_click_button(self, value):
         if str(value) in '+-*/' and any(it in self.string_number for it in '+-*/'):
-            print("testt")
             self.calculate()
+            self.string_number += value
+            self.label_result.config(text = str(self.string_number))
         else:
             self.string_number += str(value)
             self.label_result.config(text=self.string_number)
@@ -31,11 +32,10 @@ class Calculator:
 
     def calculate(self):
         if self.string_number[-1] in '+-*/':
-            print("next")
             pass
         else:
-            self.current_value = self.label_result.cget("text")
             self.label_result.config(text = str(eval(self.string_number)))
+            self.current_value = self.label_result.cget("text")
             self.string_number = str(self.current_value)
 
     def clear_field(self):
