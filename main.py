@@ -17,18 +17,40 @@ class Calculator:
     def on_click_button(self, value):
         if str(value) in '+-*/' and any(it in self.string_number for it in '+-*/'):
             self.calculate()
-            self.string_number += value
-            self.label_result.config(text = str(self.string_number))
+            if self.string_number[-1] in '+-*/':
+                pass
+            else:
+                self.string_number += value
+            self.refresh_label_result()
         else:
             self.string_number += str(value)
             self.label_result.config(text=self.string_number)
 
     def inverse_number(self):
-        self.string_number = self.string_number
-        print("test inverse")
+        self.reverse_number = self.label_result.cget("text")
+        if float(eval(self.reverse_number)) > 0:
+            if self.string_number[0] == "+":
+                self.string_number = self.string_number[1:]
+            self.string_number = ''.join(["-", self.string_number])
+        else:
+            self.string_number = self.string_number[1:]
+            self.string_number = ''.join(["+", self.string_number])
+
+        self.refresh_label_result()
+
+    def fraction_number(self):
+        self.fraction_number = self.label_result.cget("text")
+        if any(it in self.fraction_number for it in '+-*/'):
+            print("test")
+        else:
+            self.fraction_number = 1/float(self.fraction_number)
+            self.string_number = ""
+            self.string_number = ''.join(['', str(self.fraction_number)])
+            self.refresh_label_result()
 
     def delete_number(self):
         self.string_number = self.string_number[:-1]
+        self.refresh_label_result()
 
     def calculate(self):
         if self.string_number[-1] in '+-*/':
@@ -37,7 +59,8 @@ class Calculator:
             self.label_result.config(text = str(eval(self.string_number)))
             self.current_value = self.label_result.cget("text")
             self.string_number = str(self.current_value)
-
+    def refresh_label_result(self):
+        self.label_result.config(text=str(self.string_number))
     def clear_field(self):
         self.string_number = ""
         self.label_result.config(text = "")
@@ -47,7 +70,7 @@ class Calculator:
         self.label_result.place(x=40, y=115)
         self.button1 = Button(self._mainWindow, height = 3, width = 13, text="+/-", background="#828282", command = self.inverse_number)
         self.button1.place(x=3, y=492)
-        self.button2 = Button(self._mainWindow, height = 3, width = 13, text="1/x", background="#535353")
+        self.button2 = Button(self._mainWindow, height = 3, width = 13, text="1/x", background="#535353", command = self.fraction_number)
         self.button2.place(x=3, y=264)
         self.button3 = Button(self._mainWindow, height = 3, width = 13, text="%", background="#535353")
         self.button3.place(x=3, y=207)
@@ -75,7 +98,7 @@ class Calculator:
         self.button14.place(x=207, y=321)
         self.button15 = Button(self._mainWindow, height = 3, width = 13, text="0", background="#828282", command = lambda: self.on_click_button(0))
         self.button15.place(x=105, y=492)
-        self.button16 = Button(self._mainWindow, height = 3, width = 13, text=",", background="#828282", command = lambda: self.on_click_button(","))
+        self.button16 = Button(self._mainWindow, height = 3, width = 13, text=",", background="#828282", command = lambda: self.on_click_button("."))
         self.button16.place(x=207, y=492)
         self.button17 = Button(self._mainWindow, height = 3, width = 13, text="√", background="#535353", command = lambda: self.on_click_button("√"))
         self.button17.place(x=207, y=264)
@@ -91,7 +114,7 @@ class Calculator:
         self.button22.place(x=309, y=321)
         self.button23 = Button(self._mainWindow, height = 3, width = 13, text="/", background="#535353", command = lambda: self.on_click_button("/"))
         self.button23.place(x=309, y=264)
-        self.button24 = Button(self._mainWindow, height = 3, width = 13, background="#535353", text="<--", command = self.delete_number())
+        self.button24 = Button(self._mainWindow, height = 3, width = 13, background="#535353", text="<--", command = self.delete_number)
         self.button24.place(x=309, y=207)
 
 
