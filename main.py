@@ -41,6 +41,7 @@ class Calculator:
 
     def sqrt_number(self):
         self.string_number = self.string_number
+        print("test")
 
     def fraction_number(self):
         try:
