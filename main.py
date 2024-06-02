@@ -1,5 +1,6 @@
 import tkinter as tk
 import math as mt
+import re
 from tkinter import Button
 from tkinter import Label
 
@@ -40,8 +41,14 @@ class Calculator:
 
     def fraction_number(self):
         self.fraction_number = self.label_result.cget("text")
+        self.pattern = r'[+\-*/]'
         if any(it in self.fraction_number for it in '+-*/'):
-            print("test")
+            self.split_string = re.split(self.pattern, self.string_number)
+            self.operator = re.findall(self.pattern, self.fraction_number)
+            self.split_string[1] = 1/float(self.split_string[1])
+            self.string_number = ""
+            self.string_number = ''.join([str(self.split_string[0]),  str(self.split_string[1])])
+            self.refresh_label_result()
         else:
             self.fraction_number = 1/float(self.fraction_number)
             self.string_number = ""
