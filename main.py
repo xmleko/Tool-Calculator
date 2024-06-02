@@ -39,41 +39,63 @@ class Calculator:
 
         self.refresh_label_result()
 
+    def sqrt_number(self):
+        self.string_number = self.string_number
+
     def fraction_number(self):
-        self.fraction_number = self.label_result.cget("text")
-        self.pattern = r'[+\-*/]'
-        if any(it in self.fraction_number for it in '+-*/'):
-            self.split_string = re.split(self.pattern, self.string_number)
-            self.operator = re.findall(self.pattern, self.fraction_number)
-            self.split_string[1] = 1/float(self.split_string[1])
-            self.string_number = ""
-            self.string_number = ''.join([str(self.split_string[0]),  str(self.split_string[1])])
+        try:
+            self.fraction_number = self.label_result.cget("text")
+            self.pattern = r'[+\-*/]'
+            if any(it in self.fraction_number for it in '+-*/'):
+                self.split_string = re.split(self.pattern, self.string_number)
+                self.operator = re.findall(self.pattern, self.fraction_number)
+                self.string_number = ""
+                if len(self.operator) == 1:
+                    self.split_string[1] = 1 / float(self.split_string[1])
+                    self.string_number = ''.join([str(self.split_string[0]), self.operator[0],  str(self.split_string[1])])
+                else:
+                    self.split_string[2] = 1 / float(self.split_string[2])
+                    self.string_number = ''.join([self.operator[0], str(self.split_string[1]), self.operator[1], str(self.split_string[2])])
+                self.refresh_label_result()
+            else:
+                self.fraction_number = 1/float(self.fraction_number)
+                self.string_number = ''.join(['', str(self.fraction_number)])
+                self.refresh_label_result()
+        except ZeroDivisionError:
+            self.string_number = "Error Division by Zero - Try Again."
             self.refresh_label_result()
-        else:
-            self.fraction_number = 1/float(self.fraction_number)
-            self.string_number = ""
-            self.string_number = ''.join(['', str(self.fraction_number)])
+        except ValueError:
+            self.string_number = "Error Invalid Input - Try Again."
             self.refresh_label_result()
+
 
     def delete_number(self):
         self.string_number = self.string_number[:-1]
         self.refresh_label_result()
 
     def calculate(self):
-        if self.string_number[-1] in '+-*/':
-            pass
-        else:
-            self.label_result.config(text = str(eval(self.string_number)))
-            self.current_value = self.label_result.cget("text")
-            self.string_number = str(self.current_value)
+        try:
+            if self.string_number[-1] in '+-*/':
+                pass
+            else:
+                self.label_result.config(text = str(eval(self.string_number)))
+                self.current_value = self.label_result.cget("text")
+                self.string_number = str(self.current_value)
+        except ZeroDivisionError:
+            self.string_number = "Error Division by Zero - Try Again."
+            self.refresh_label_result()
+        except Exception:
+            self.string_number = "Error Invalid Input - Try Again."
+            self.refresh_label_result()
+
     def refresh_label_result(self):
         self.label_result.config(text=str(self.string_number))
     def clear_field(self):
         self.string_number = ""
-        self.label_result.config(text = "")
+        self.label_result.config(text = "0")
 
     def create_button(self):
-        self.label_result = Label(self._mainWindow, height = 4, width = 35, font = ('Arial', 11), anchor = 'e')
+        self.label_result = Label(self._mainWindow, height = 4, width = 35, font = ('Arial', 11), anchor = 'e', text= "0")
         self.label_result.place(x=40, y=115)
         self.button1 = Button(self._mainWindow, height = 3, width = 13, text="+/-", background="#828282", command = self.inverse_number)
         self.button1.place(x=3, y=492)
@@ -81,7 +103,7 @@ class Calculator:
         self.button2.place(x=3, y=264)
         self.button3 = Button(self._mainWindow, height = 3, width = 13, text="%", background="#535353")
         self.button3.place(x=3, y=207)
-        self.button4 = Button(self._mainWindow, height = 3, width = 13, text="x²", background="#535353")
+        self.button4 = Button(self._mainWindow, height = 3, width = 13, text="x²", background="#535353", command = self.sqrt_number)
         self.button4.place(x=105, y=264)
         self.button5 = Button(self._mainWindow, height = 3, width = 13, text="x³", background="#535353")
         self.button5.place(x=105, y=207)
