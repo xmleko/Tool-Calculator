@@ -1,5 +1,5 @@
+import math
 import tkinter as tk
-import math as mt
 import re
 from tkinter import Button
 from tkinter import Label
@@ -12,6 +12,7 @@ class Calculator:
         self._mainWindow.title("Calculator")
         self._mainWindow.configure(background = "#222222")
         self.string_number = ""
+        self.pattern = r'[+\-*/]'
         self.create_button()
         self._mainWindow.mainloop()
 
@@ -39,14 +40,96 @@ class Calculator:
 
         self.refresh_label_result()
 
+    def number_power_two(self):
+        try:
+            self.power_number = self.label_result.cget("text")
+            if any(it in self.power_number for it in '+-*/'):
+                self.split_string = re.split(self.pattern, self.string_number)
+                self.operator = re.findall(self.pattern, self.power_number)
+                self.string_number = ""
+                if len(self.operator) == 1:
+                    self.split_string[1] = float(self.split_string[1])**2
+                    self.string_number = ''.join([str(self.split_string[0]), self.operator[0], str(self.split_string[1])])
+                else:
+                    self.split_string[2] = float(self.split_string[2])**2
+                    self.string_number = ''.join(
+                        [self.operator[0], str(self.split_string[1]), self.operator[1], str(self.split_string[2])])
+                self.refresh_label_result()
+            else:
+                self.power_number = float(self.power_number)**2
+                self.string_number = str(self.power_number)
+                self.refresh_label_result()
+        except Exception:
+            self.string_number = "Error Too High Number."
+            self.refresh_label_result()
+
+    def number_power_three(self):
+        try:
+            self.power_number = self.label_result.cget("text")
+            if any(it in self.power_number for it in '+-*/'):
+                self.split_string = re.split(self.pattern, self.string_number)
+                self.operator = re.findall(self.pattern, self.power_number)
+                self.string_number = ""
+                if len(self.operator) == 1:
+                    self.split_string[1] = pow(float(self.split_string[1]), 3)
+                    self.string_number = ''.join([str(self.split_string[0]), self.operator[0], str(self.split_string[1])])
+                else:
+                    self.split_string[2] = pow(float(self.split_string[2]), 3)
+                    self.string_number = ''.join([self.operator[0], str(self.split_string[1]), self.operator[1], str(self.split_string[2])])
+                self.refresh_label_result()
+            else:
+                self.power_number = pow(float(self.power_number), 3)
+                self.string_number = str(self.power_number)
+                self.refresh_label_result()
+        except Exception:
+            self.string_number = "Error Too High Number."
+            self.refresh_label_result()
+
+    def percentage(self):
+        try:
+            self.number_percentage = self.label_result.cget("text")
+            self.split_string = re.split(self.pattern, self.string_number)
+            self.operator = re.findall(self.pattern, self.number_percentage)
+            self.string_number = ""
+            self.number_percentage = self.percentages_count(self.split_string[0], self.split_string[1])
+            self.string_number = ''.join([str(self.split_string[0]), self.operator[0], str(self.number_percentage)])
+            self.refresh_label_result()
+        except Exception:
+            self.string_number = "Error Too High Number."
+            self.refresh_label_result()
+
+    def percentages_count(self, a, b):
+        self.result_percentage = (float(a) * float(b)) / 100
+        return self.result_percentage
+
     def sqrt_number(self):
-        self.string_number = self.string_number
-        print("test")
+        try:
+            self.sqrt_number = self.label_result.cget("text")
+            if float(eval(self.sqrt_number)) < 0:
+                self.string_number = "You can't square root of negative number."
+                self.refresh_label_result()
+            elif any(it in self.sqrt_number for it in '+-*/'):
+                self.split_string = re.split(self.pattern, self.string_number)
+                self.operator = re.findall(self.pattern, self.sqrt_number)
+                self.string_number = ""
+                if len(self.operator) == 1:
+                    self.split_string[1] = math.sqrt(float(self.split_string[1]))
+                    self.string_number = ''.join([str(self.split_string[0]), self.operator[0],  str(self.split_string[1])])
+                else:
+                    self.split_string[2] = math.sqrt(float(self.split_string[2]))
+                    self.string_number = ''.join([self.operator[0], str(self.split_string[1]), self.operator[1], str(self.split_string[2])])
+                self.refresh_label_result()
+            else:
+                self.sqrt_number = math.sqrt(float(self.sqrt_number))
+                self.string_number = str(self.sqrt_number)
+                self.refresh_label_result()
+        except ValueError:
+            self.string_number = "Error Invalid Input - Try Again."
+            self.refresh_label_result()
 
     def fraction_number(self):
         try:
             self.fraction_number = self.label_result.cget("text")
-            self.pattern = r'[+\-*/]'
             if any(it in self.fraction_number for it in '+-*/'):
                 self.split_string = re.split(self.pattern, self.string_number)
                 self.operator = re.findall(self.pattern, self.fraction_number)
@@ -91,6 +174,7 @@ class Calculator:
 
     def refresh_label_result(self):
         self.label_result.config(text=str(self.string_number))
+
     def clear_field(self):
         self.string_number = ""
         self.label_result.config(text = "0")
@@ -102,11 +186,11 @@ class Calculator:
         self.button1.place(x=3, y=492)
         self.button2 = Button(self._mainWindow, height = 3, width = 13, text="1/x", background="#535353", command = self.fraction_number)
         self.button2.place(x=3, y=264)
-        self.button3 = Button(self._mainWindow, height = 3, width = 13, text="%", background="#535353")
+        self.button3 = Button(self._mainWindow, height = 3, width = 13, text="%", background="#535353", command = self.percentage)
         self.button3.place(x=3, y=207)
-        self.button4 = Button(self._mainWindow, height = 3, width = 13, text="x²", background="#535353", command = self.sqrt_number)
+        self.button4 = Button(self._mainWindow, height = 3, width = 13, text="x²", background="#535353", command = self.number_power_two)
         self.button4.place(x=105, y=264)
-        self.button5 = Button(self._mainWindow, height = 3, width = 13, text="x³", background="#535353")
+        self.button5 = Button(self._mainWindow, height = 3, width = 13, text="x³", background="#535353", command = self.number_power_three)
         self.button5.place(x=105, y=207)
         self.button6 = Button(self._mainWindow, height = 3, width = 13, text="1", background="#828282", command = lambda: self.on_click_button(1))
         self.button6.place(x=3, y=435)
@@ -130,7 +214,7 @@ class Calculator:
         self.button15.place(x=105, y=492)
         self.button16 = Button(self._mainWindow, height = 3, width = 13, text=",", background="#828282", command = lambda: self.on_click_button("."))
         self.button16.place(x=207, y=492)
-        self.button17 = Button(self._mainWindow, height = 3, width = 13, text="√", background="#535353", command = lambda: self.on_click_button("√"))
+        self.button17 = Button(self._mainWindow, height = 3, width = 13, text="√", background="#535353", command = self.sqrt_number)
         self.button17.place(x=207, y=264)
         self.button18 = Button(self._mainWindow, height = 3, width = 13, text="C", background="#535353", command = self.clear_field)
         self.button18.place(x=207, y=207)
