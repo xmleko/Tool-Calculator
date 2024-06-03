@@ -29,14 +29,18 @@ class Calculator:
             self.label_result.config(text=self.string_number)
 
     def inverse_number(self):
-        self.reverse_number = self.label_result.cget("text")
-        if float(eval(self.reverse_number)) > 0:
-            if self.string_number[0] == "+":
+        try:
+            self.reverse_number = self.label_result.cget("text")
+            if float(eval(self.reverse_number)) > 0:
+                if self.string_number[0] == "+":
+                    self.string_number = self.string_number[1:]
+                self.string_number = ''.join(["-", self.string_number])
+            else:
                 self.string_number = self.string_number[1:]
-            self.string_number = ''.join(["-", self.string_number])
-        else:
-            self.string_number = self.string_number[1:]
-            self.string_number = ''.join(["+", self.string_number])
+                self.string_number = ''.join(["+", self.string_number])
+        except Exception:
+            self.string_number = "Something went wrong.."
+            self.refresh_label_result()
 
         self.refresh_label_result()
 
